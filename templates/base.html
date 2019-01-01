@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block head %}
+    <title>{% block title %}{% endblock %} - My Application</title>
+    {% endblock %}
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+</head>
+<body style="background-color:#f2f2f2">
+<script src="../static/layui/layui.js"></script>
+
+
+
+<ul class="layui-nav layui-nav-tree layui-nav-side">
+  <span>图书管理系统</span>
+  <li class="layui-nav-item">
+    <a href="javascript:;">默认展开</a>
+    <dl class="layui-nav-child">
+      <dd><a href="javascript:;">选项1</a></dd>
+      <dd><a href="javascript:;">选项2</a></dd>
+      <dd><a href="">跳转</a></dd>
+    </dl>
+  </li>
+  <li class="layui-nav-item">
+    <a href="javascript:;">解决方案</a>
+    <dl class="layui-nav-child">
+      <dd><a href="">移动模块</a></dd>
+      <dd><a href="">后台模版</a></dd>
+      <dd><a href="">电商平台</a></dd>
+    </dl>
+  </li>
+  <li class="layui-nav-item"><a href="">产品</a></li>
+  <li class="layui-nav-item"><a href="">大数据</a></li>
+</ul>
+
+<ul class="layui-nav" style="text-align:right;background-color:#FFFFFF;">
+  <li class="layui-nav-item">
+    <a href="" style="color:#000000">控制台<span class="layui-badge">9</span></a>
+  </li>
+  <li class="layui-nav-item">
+    <a href="" style="color:#000000">个人中心<span class="layui-badge-dot"></span></a>
+  </li>
+  <li class="layui-nav-item">
+    <a href="" style="color:#000000">某某某用户</a>
+    <dl class="layui-nav-child">
+      <dd><a href="javascript:;">修改信息</a></dd>
+      <dd><a href="javascript:;">安全管理</a></dd>
+      <dd><a href="javascript:;">退出</a></dd>
+    </dl>
+  </li>
+</ul>
+
+{% block body %}
+{% endblock %}
+<script>
+
+layui.use('element', function(){
+  var element = layui.element;
+  element.init();
+  //…
+});
+</script>
+</body>
+</html>

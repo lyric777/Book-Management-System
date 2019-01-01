@@ -1,0 +1,15 @@
+markupsafe/__init__.py,sha256=T5J4pS7LRx1xRqfV3xz-QN_D9pSmfVDJnTrc2cTO4Ro,10164
+markupsafe/_compat.py,sha256=3oSvQpEFzsJ29NKVy-Fqk6ZlRxmlCB5k0G21aN0zNtQ,596
+markupsafe/_constants.py,sha256=ueEz1Jxdw5TKWBbhPr4Ad_2L2MSEh73AYiYe4l3cZy4,4728
+markupsafe/_native.py,sha256=fUrjjbRXIpHM-8l9QXFJ2xg5rv_48U2aN99plyL0kfs,1911
+markupsafe/_speedups.cp36-win_amd64.pyd,sha256=Irk9sta0ZpoWak-R75dyX99VYSYGPNpOhUj1k5PjCXc,15360
+MarkupSafe-1.1.0.dist-info/LICENSE.rst,sha256=7V249lpOdvRv2m6SF9gCDtq_nsg8tFpdeTdsWWM_g9M,1614
+MarkupSafe-1.1.0.dist-info/METADATA,sha256=usFnBges7tmAH4_Yt5Ypb8Bco4R9uLUdD0V6YHbvhLw,3585
+MarkupSafe-1.1.0.dist-info/WHEEL,sha256=sJhBKhJYGYSNowLlgnoOgHmlIo09mHmDvDK6wECJMKo,106
+MarkupSafe-1.1.0.dist-info/top_level.txt,sha256=qy0Plje5IJuvsCBjejJyhDCjEAdcDLK_2agVcex8Z6U,11
+MarkupSafe-1.1.0.dist-info/RECORD,,
+MarkupSafe-1.1.0.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+markupsafe/__pycache__/_compat.cpython-36.pyc,,
+markupsafe/__pycache__/_constants.cpython-36.pyc,,
+markupsafe/__pycache__/_native.cpython-36.pyc,,
+markupsafe/__pycache__/__init__.cpython-36.pyc,,
