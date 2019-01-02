@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}查询图书信息{% endblock %}
+
+{% block style %}
+    #layui-select{width:60px;}
+{% endblock %}
+
+{% block card %}查询图书信息{% endblock %}
+{% block body %}
+    <form class="layui-form" action="/" method="post">
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                {{ form.method() }}
+
+                <label class="layui-form-label">查询内容：</label>
+                <div class="layui-input-inline">
+                    {{ form.content(class="layui-input") }}
+                </div>
+                <div class="layui-input-inline">{{ form.submit(class="layui-btn") }}</div>
+            </div>
+
+        </div>
+    </form>
+{% endblock %}
+
+{% block script %}
+        layui.use(['element','form'], function(){
+            var form = layui.form;
+            var element = layui.element;
+            element.init();
+
+            form.on('submit(test)', function(data){
+            console.log(data)});
+
+
+        });
+{% endblock %}
+

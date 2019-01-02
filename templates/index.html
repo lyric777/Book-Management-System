@@ -1,13 +1,17 @@
 {% extends "base.html" %}
 {% block title %}首页{% endblock %}
-{% block head %}
 
-<style>
-</style>
-{% endblock %}
+
 
 {% block body %}
 <h1>Hello, World!</h1>
     {{ name }}你好！
 
+{% endblock %}
+{% block script %}
+layui.use('element', function(){
+  var element = layui.element;
+  element.init();
+
+});
 {% endblock %}

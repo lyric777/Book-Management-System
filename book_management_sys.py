@@ -4,11 +4,17 @@ import os
 from flask_script import Manager, Shell
 
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, SelectField
+from wtforms.validators import Required
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 manager = Manager(app)
 
+app.config['SECRET_KEY'] = 'hard to guess string'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
@@ -90,13 +96,26 @@ manager.add_command("shell", Shell(make_context=make_shell_context))
 
 
 @app.route('/')
-def hello_world():
+def index():
     return render_template('index.html')
 
 
 @app.route('/user/<name>')
 def user(name):
     return render_template('index.html', name=name)
+
+
+@app.route('/search_book')
+def search_book():
+    form = SearchBookForm()
+    return render_template('search-book.html', form=form)
+
+
+class SearchBookForm(FlaskForm):
+    methods = [('title', '书名'), ('author', '作者'), ('class', '类别'), ('isbn', 'ISBN')]
+    method = SelectField(choices=methods)
+    content = StringField(validators=[Required()])
+    submit = SubmitField()
 
 
 if __name__ == '__main__':
