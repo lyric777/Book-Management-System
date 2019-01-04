@@ -2,36 +2,62 @@
 {% block title %}查询图书信息{% endblock %}
 
 {% block style %}
-    #layui-select{width:60px;}
+    .layui-unselect{width:240px;}
+    .layui-input{width:240px;}
 {% endblock %}
 
-{% block card %}查询图书信息{% endblock %}
+{% block card %}<h2>查询图书信息</h2>{% endblock %}
 {% block body %}
     <form class="layui-form" action="/" method="post">
 
         <div class="layui-form-item">
             <div class="layui-inline">
-                {{ form.method() }}
-
-                <label class="layui-form-label">查询内容：</label>
-                <div class="layui-input-inline">
-                    {{ form.content(class="layui-input") }}
+                <div class="layui-row layui-col-space10">
+                    <div class="layui-col-md4">
+                        {{ form.method(class="layui-input-inline") }}
+                    </div>
+                    <div class="layui-col-md6">
+                        <label class="layui-form-label">查询内容：</label>
+                        <div class="layui-input-inline">
+                            {{ form.content(class="layui-input") }}
+                        </div>
+                    </div>
+                    <div class="layui-col-md2">
+                        <div class="layui-input-inline">{{ form.submit(class="layui-btn") }}</div>
+                    </div>
                 </div>
-                <div class="layui-input-inline">{{ form.submit(class="layui-btn") }}</div>
             </div>
 
         </div>
     </form>
+    <table id="demo" lay-filter="test"></table>
 {% endblock %}
 
 {% block script %}
-        layui.use(['element','form'], function(){
+        layui.use(['form','table'], function(){
             var form = layui.form;
-            var element = layui.element;
-            element.init();
+            var table = layui.table;
 
             form.on('submit(test)', function(data){
             console.log(data)});
+            table.render({
+                elem: '#demo'
+                ,height: 312
+                ,url: '/demo/table/user/' //数据接口
+                ,page: true //开启分页
+                ,cols: [[ //表头
+                  {field: 'id', title: 'ID', width:80, sort: true}
+                  ,{field: 'username', title: '用户名', width:80}
+                  ,{field: 'sex', title: '性别', width:80, sort: true}
+                  ,{field: 'city', title: '城市', width:80}
+                  ,{field: 'sign', title: '签名', width: 80}
+                  ,{field: 'experience', title: '积分', width: 80, sort: true}
+                  ,{field: 'score', title: '评分', width: 80, sort: true}
+                  ,{field: 'classify', title: '职业', width: 80}
+                  ,{field: 'wealth', title: '财富', width: 135, sort: true}
+                ]]
+             });
+
 
 
         });

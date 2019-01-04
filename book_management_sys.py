@@ -5,7 +5,7 @@ from flask_script import Manager, Shell
 
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField
+from wtforms import StringField, SubmitField, SelectField, PasswordField
 from wtforms.validators import Required
 
 
@@ -95,27 +95,40 @@ def make_shell_context():
 manager.add_command("shell", Shell(make_context=make_shell_context))
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    form = Login()
+    return render_template('login.html', form=form)
+
+
+@app.route('/index')
 def index():
     return render_template('index.html')
 
 
-@app.route('/user/<name>')
+@app.route('/admin/<name>')
 def user(name):
     return render_template('index.html', name=name)
 
 
 @app.route('/search_book')
 def search_book():
+    name = None
     form = SearchBookForm()
-    return render_template('search-book.html', form=form)
+    return render_template('search-book.html', name=name, form=form)
+
+
+class Login(FlaskForm):
+    account = StringField('账号', validators=[Required()])
+    password = PasswordField('密码', validators=[Required()])
+    submit = SubmitField('登录')
 
 
 class SearchBookForm(FlaskForm):
     methods = [('title', '书名'), ('author', '作者'), ('class', '类别'), ('isbn', 'ISBN')]
     method = SelectField(choices=methods)
     content = StringField(validators=[Required()])
-    submit = SubmitField()
+    submit = SubmitField('搜索')
 
 
 if __name__ == '__main__':

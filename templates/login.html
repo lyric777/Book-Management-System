@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎使用图书管理系统</title>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/login.css">
+</head>
+<body>
+
+<div class="login-main">
+    <header class="layui-elip">登录</header>
+    <form class="layui-form">
+        <div class="layui-input-inline">
+            {{ form.account(class="layui-input",placeholder="账号") }}
+        </div>
+        <div class="layui-input-inline">
+            {{ form.password(class="layui-input",placeholder="密码") }}
+        </div>
+        <div class="layui-input-inline login-btn">
+            {{ form.submit(class="layui-btn") }}
+            <button lay-submit lay-filter="login" class="layui-btn">登录</button>
+        </div>
+        <hr/>
+        <p><a href=" class="fl">学生入口</a><a href="javascript:;" class="fr">忘记密码请与系统管理员联系</a></p>
+    </form>
+</div>
+
+
+<script src="../static/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['form','layer','jquery'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        form.on('submit(login)',function (data) {
+            // console.log(data.field);
+            $.ajax({
+                url:'index',
+                data:data.field,
+                dataType:'text',
+                type:'get',   //change to post
+                success:function (data) {
+                    if ('1' === '1'){
+                        location.href = "index";
+                    }else{
+                        layer.msg('登录名或密码错误');
+                    }
+                }
+            });
+            return false;
+        })
+
+    });
+</script>
+</body>
+</html>

@@ -1,64 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="../static/layui/css/layui.css">
-    <style>{% block style %}{% endblock %}</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="../static/layui/css/layui.css">
+  <style>{% block style %}{% endblock %}</style>
 </head>
-<body style="background-color:#f2f2f2;height:100%; width:100%;">
-<script src="../static/layui/layui.js"></script>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo">图书管理系统</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+          {{ name }}
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退出登录</a></li>
+    </ul>
+  </div>
 
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item">
+          <a class="" href="javascript:;">图书管理</a>
+          <dl class="layui-nav-child">
+             <dd><a href="javascript:;">入库管理</a></dd>
+             <dd><a href="javascript:;">学生借书</a></dd>
+             <dd><a href="">学生还书</a></dd>
+             <dd><a href="">图书注销</a></dd>
+           </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">信息设置</a>
+          <dl class="layui-nav-child">
+             <dd><a href="">管理员设置</a></dd>
+             <dd><a href="">图书馆信息设置</a></dd>
+             <dd><a href="">图书词库设置</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="http://127.0.0.1:5000/search_book">图书信息查询</a>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">学生信息查询</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-<div class="layui-container">
-<ul class="layui-nav layui-nav-tree layui-nav-side">
-  <span style="color:#BFC0C2;font-size: medium;margin-left: 20px;line-height: 50px;">图书管理系统</span>
-  <li class="layui-nav-item">
-    <a href="javascript:;">图书管理</a>
-    <dl class="layui-nav-child">
-      <dd><a href="javascript:;">入库管理</a></dd>
-      <dd><a href="javascript:;">学生借书</a></dd>
-      <dd><a href="">学生还书</a></dd>
-      <dd><a href="">图书注销</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item">
-    <a href="javascript:;">信息设置</a>
-    <dl class="layui-nav-child">
-      <dd><a href="">管理员设置</a></dd>
-      <dd><a href="">图书馆信息设置</a></dd>
-      <dd><a href="">图书词库设置</a></dd>
-    </dl>
-  </li>
-  <li class="layui-nav-item">
-    <a href="http://127.0.0.1:5000/search_book">图书信息查询</a>
-  </li>
-    <li class="layui-nav-item">
-    <a href="javascript:;">学生信息查询</a>
-  </li>
-</ul>
-
-<ul class="layui-nav" style="text-align:right;background-color:#FFFFFF;width:110%;">
-  <li class="layui-nav-item">
-    <a href="" style="color:#000000">个人中心<span class="layui-badge-dot"></span></a>
-     <dl class="layui-nav-child">
-      <dd><a href="javascript:;">修改信息</a></dd>
-      <dd><a href="javascript:;">退出系统</a></dd>
-    </dl>
-  </li>
-</ul>
-
-
-<div class="layui-card layui-row layui-col-space10" style="margin:15px 100px;width:100%;">
-    <div class="layui-card-header">{% block card %}{% endblock %}</div>
-    <div class="layui-card-body" style="height:480px">
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <div class="layui-card layui-row layui-col-space10" style="margin:15px 10px;width:100%;">
+        <div class="layui-card-header">{% block card %}{% endblock %}</div>
+        <div class="layui-card-body">
         {% block body %}
         {% endblock %}
+        </div>
     </div>
+  </div>
+
+  <div class="layui-footer">
+    Copyright 2019 Construct&nbsp;&nbsp;|&nbsp;&nbsp;版权所有:信息162许致立
+  </div>
 </div>
+<script src="../static/layui/layui.js"></script>
+<script>
+
+layui.use('element', function(){
+  var element = layui.element;
+  element.init();
 
 
-
+});
+</script>
 <script>
 {% block script %}
 
