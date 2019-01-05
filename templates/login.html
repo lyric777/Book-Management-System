@@ -7,10 +7,21 @@
     <link rel="stylesheet" href="../static/login.css">
 </head>
 <body>
+<div class="layui-layout layui-layout-admin">
+<div class="layui-header layui-bg-cyan">
+  <div class="layui-logo"><span style="color:#F0F0F0;font-size: large">图书管理系统</span></div>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item"><a href="javascript:;">学生信息查询</a></li>
+      <li class="layui-nav-item"><a href="">图书信息查询</a></li>
+    </ul>
+  </div>
+</div>
+</div>
 
 <div class="login-main">
     <header class="layui-elip">登录</header>
-    <form class="layui-form">
+    <form class="layui-form" method="post">
+        {{ form.csrf_token }}
         <div class="layui-input-inline">
             {{ form.account(class="layui-input",placeholder="账号") }}
         </div>
@@ -24,6 +35,9 @@
         <hr/>
         <p><a href=" class="fl">学生入口</a><a href="javascript:;" class="fr">忘记密码请与系统管理员联系</a></p>
     </form>
+    {% for message in get_flashed_messages() %}
+        {{ message }}
+    {% endfor %}
 </div>
 
 

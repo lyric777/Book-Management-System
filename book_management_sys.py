@@ -1,12 +1,8 @@
-from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, session, redirect, url_for, flash
 import os
+from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager, Shell
-
-
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, PasswordField
-from wtforms.validators import Required
+from forms import Login, SearchBookForm
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -18,6 +14,13 @@ app.config['SECRET_KEY'] = 'hard to guess string'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
+
+
+def make_shell_context():
+    return dict(app=app, db=db, Admin=Admin, Book=Book)
+
+
+manager.add_command("shell", Shell(make_context=make_shell_context))
 
 
 class Admin(db.Model):
@@ -87,27 +90,50 @@ class ReadBook(db.Model):
     def __repr__(self):
         return '<ReadBook %r>' % self.id
 
-
-def make_shell_context():
-    return dict(app=app, db=db, Admin=Admin, Book=Book)
-
-
-manager.add_command("shell", Shell(make_context=make_shell_context))
+'''
+后面加login_required
+'''
 
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
     form = Login()
+    session['name'] = form.account.data
+
+    print(form.validate_on_submit())
+    if form.validate_on_submit():
+        print(66666666)
+        user = Admin.query.filter_by(admin_id=form.account.data, password=form.password.data).first()
+        print(user)
+        if user is None:
+            flash('账号或密码错误！')
+            return redirect(url_for('login'))
+        else:
+            session['name'] = form.account.data
+            print(session.get('name'))
+            return redirect(url_for('index'))
     return render_template('login.html', form=form)
+
+
+'''
+    if form.validate_on_submit():
+        session['name'] = form.name.data
+        return redirect(url_for('admin')), name=session.get('name')
+'''
+
+
+'''
+flash消息在第四章最后一节，在管理员权限那里用
+'''
 
 
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', name=session.get('name'))
 
 
 @app.route('/admin/<name>')
-def user(name):
+def admin(name):
     return render_template('index.html', name=name)
 
 
@@ -116,19 +142,6 @@ def search_book():
     name = None
     form = SearchBookForm()
     return render_template('search-book.html', name=name, form=form)
-
-
-class Login(FlaskForm):
-    account = StringField('账号', validators=[Required()])
-    password = PasswordField('密码', validators=[Required()])
-    submit = SubmitField('登录')
-
-
-class SearchBookForm(FlaskForm):
-    methods = [('title', '书名'), ('author', '作者'), ('class', '类别'), ('isbn', 'ISBN')]
-    method = SelectField(choices=methods)
-    content = StringField(validators=[Required()])
-    submit = SubmitField('搜索')
 
 
 if __name__ == '__main__':
