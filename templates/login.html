@@ -5,17 +5,31 @@
     <title>欢迎使用图书管理系统</title>
     <link rel="stylesheet" href="../static/layui/css/layui.css">
     <link rel="stylesheet" href="../static/login.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <style>
+        a:hover{text-decoration: none}
+    </style>
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
 <div class="layui-header layui-bg-cyan">
   <div class="layui-logo"><span style="color:#F0F0F0;font-size: large">图书管理系统</span></div>
     <ul class="layui-nav layui-layout-right">
-      <li class="layui-nav-item"><a href="javascript:;">学生信息查询</a></li>
-      <li class="layui-nav-item"><a href="">图书信息查询</a></li>
+      <li class="layui-nav-item"><a class="aa" href="javascript:;">登录</a></li>
+      <li class="layui-nav-item"><a class="aa" href="javascript:;">学生信息查询</a></li>
+      <li class="layui-nav-item"><a class="aa" href="">图书信息查询</a></li>
     </ul>
   </div>
 </div>
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+    </div>
+{% endfor %}
 </div>
 
 <div class="login-main">
@@ -30,39 +44,17 @@
         </div>
         <div class="layui-input-inline login-btn">
             {{ form.submit(class="layui-btn") }}
-            <button lay-submit lay-filter="login" class="layui-btn">登录</button>
         </div>
         <hr/>
-        <p><a href=" class="fl">学生入口</a><a href="javascript:;" class="fr">忘记密码请与系统管理员联系</a></p>
+        <p><a href="javascript:;" class="fr" style="text-decoration: none;font-size: small;color: #A9A9A9;">忘记密码请与系统管理员联系</a></p>
     </form>
-    {% for message in get_flashed_messages() %}
-        {{ message }}
-    {% endfor %}
-</div>
 
+</div>
 
 <script src="../static/layui/layui.js"></script>
 <script type="text/javascript">
-    layui.use(['form','layer','jquery'], function () {
+    layui.use('form', function () {
         var form = layui.form;
-        var $ = layui.jquery;
-        form.on('submit(login)',function (data) {
-            // console.log(data.field);
-            $.ajax({
-                url:'index',
-                data:data.field,
-                dataType:'text',
-                type:'get',   //change to post
-                success:function (data) {
-                    if ('1' === '1'){
-                        location.href = "index";
-                    }else{
-                        layer.msg('登录名或密码错误');
-                    }
-                }
-            });
-            return false;
-        })
 
     });
 </script>
