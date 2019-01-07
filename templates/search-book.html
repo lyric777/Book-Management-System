@@ -8,8 +8,8 @@
 
 {% block card %}<div class="layui-card-header"><h2>查询图书信息</h2></div>{% endblock %}
 {% block body %}
-    <form class="layui-form" action="/" method="post">
-
+    <form class="layui-form" method="post">
+    {{ form.csrf_token }}
         <div class="layui-form-item">
             <div class="layui-inline">
                 <div class="layui-row layui-col-space10">
@@ -23,43 +23,96 @@
                         </div>
                     </div>
                     <div class="layui-col-md2">
-                        <div class="layui-input-inline">{{ form.submit(class="layui-btn") }}</div>
+                        <div class="layui-input-inline">{{ form.submit(class="layui-btn", id="search") }}</div>
                     </div>
                 </div>
             </div>
 
         </div>
     </form>
-    <table id="demo" lay-filter="test"></table>
+    <div id="myDiv"><h2>通过 AJAX 改变文本</h2></div>
+    <table lay-filter="demo" lay-even>
+      <thead>
+        <tr>
+          <th lay-data="{field:'isbn', width:180}">ISBN</th>
+          <th lay-data="{field:'book_name', width:180}">书名</th>
+          <th lay-data="{field:'press', width:140}">出版社</th>
+          <th lay-data="{field:'author', width:100}">作者</th>
+          <th lay-data="{field:'class_name', width:100}">类别</th>
+          <th lay-data="{field:'count', width:120}">馆藏数量</th>
+          <th lay-data="{field:'available'}">可借数量</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ flag }}</td>
+          <td>66</td>
+          <td>人生就像是一场修行a</td>
+        </tr>
+        <tr>
+          <td>贤心2</td>
+          <td>88</td>
+          <td>人生就像是一场修行b</td>
+        </tr>
+        <tr>
+          <td>贤心3</td>
+          <td>33</td>
+          <td>人生就像是一场修行c</td>
+        </tr>
+      <tr>
+          <td>贤心3</td>
+          <td>33</td>
+          <td>人生就像是一场修行c</td>
+        </tr>
+      <tr>
+          <td>贤心3</td>
+          <td>33</td>
+          <td>人生就像是一场修行c</td>
+        </tr>
+      <tr>
+          <td>贤心3</td>
+          <td>33</td>
+          <td>人生就像是一场修行c</td>
+        </tr>
+      <tr>
+          <td>贤心3</td>
+          <td>33</td>
+          <td>人生就像是一场修行c</td>
+        </tr>
+      </tbody>
+    </table>
+
 {% endblock %}
 
 {% block script %}
-        layui.use(['form','table'], function(){
-            var form = layui.form;
-            var table = layui.table;
+    layui.use(['form','table','jquery'], function(){
+        var form = layui.form;
+        var table = layui.table;
+        var $ = layui.$
 
-            form.on('submit(test)', function(data){
-            console.log(data)});
-            table.render({
-                elem: '#demo'
-                ,height: 312
-                ,url: '/demo/table/user/' //数据接口
-                ,page: true //开启分页
-                ,cols: [[ //表头
-                  {field: 'id', title: 'ID', width:80, sort: true}
-                  ,{field: 'username', title: '用户名', width:80}
-                  ,{field: 'sex', title: '性别', width:80, sort: true}
-                  ,{field: 'city', title: '城市', width:80}
-                  ,{field: 'sign', title: '签名', width: 80}
-                  ,{field: 'experience', title: '积分', width: 80, sort: true}
-                  ,{field: 'score', title: '评分', width: 80, sort: true}
-                  ,{field: 'classify', title: '职业', width: 80}
-                  ,{field: 'wealth', title: '财富', width: 135, sort: true}
-                ]]
-             });
-
-
-
+        table.init('demo', {
+              height: 390
+              ,limit: 7
+              ,page: true
         });
+        $(document).ready(function(){
+           $("#search").click(function(){
+              htmlobj=$.ajax({
+                type:'POST',
+                url:'{{url_for("search_book")}}',
+                data:$("#content").val(),
+                dataType:'json',//希望服务器返回json格式的数据
+                success:function(data){
+                    alert(JSON.stringify(data));
+                }
+              });
+           $("#myDiv").html(htmlobj.responseText);
+        });
+    });
+
+
+
+
+    });
 {% endblock %}
 

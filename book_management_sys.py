@@ -1,8 +1,8 @@
-from flask import Flask, render_template, session, redirect, url_for, flash
+from flask import Flask, render_template, session, redirect, url_for, flash, request, jsonify
 import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager, Shell
-from forms import Login, SearchBookForm, ChangePasswordForm
+from forms import Login, SearchBookForm, ChangePasswordForm, EditInfoForm
 from flask_login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -99,7 +99,7 @@ class Inventory(db.Model):
 
 class ReadBook(db.Model):
     __tablename__ = 'readbook'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     barcode = db.Column(db.ForeignKey('inventory.barcode'), index=True)
     card_id = db.Column(db.ForeignKey('student.card_id'), index=True)
     start_date = db.Column(db.Date)
@@ -120,10 +120,8 @@ def load_user(admin_id):
 @app.route('/', methods=['GET', 'POST'])
 def login():
     form = Login()
-    print(form.validate_on_submit())
     if form.validate_on_submit():
         user = Admin.query.filter_by(admin_id=form.account.data, password=form.password.data).first()
-        print(user)
         if user is None:
             flash('账号或密码错误！')
             return redirect(url_for('login'))
@@ -163,22 +161,46 @@ def user_info(id):
 @login_required
 def change_password():
     form = ChangePasswordForm()
+    if form.password2.data != form.password.data:
+        flash('两次密码不一致！')
     if form.validate_on_submit():
         if current_user.verify_password(form.old_password.data):
             current_user.password = form.password.data
             db.session.add(current_user)
             db.session.commit()
-            flash('已成功修改密码！')
+            flash(u'已成功修改密码！')
             return redirect(url_for('index'))
         else:
-            flash('修改失败！')
+            flash(u'原密码输入错误，修改失败！')
     return render_template("change-password.html", form=form)
 
 
-@app.route('/search_book')
+@app.route('/change_info', methods=['GET', 'POST'])
 @login_required
-def search_book():
+def change_info():
+    form = EditInfoForm()
+    if form.validate_on_submit():
+        current_user.admin_name = form.name.data
+        db.session.add(current_user)
+        flash(u'已成功修改个人信息！')
+        return redirect(url_for('user_info', id=current_user.admin_id))
+    form.name.data = current_user.admin_name
+    id = current_user.admin_id
+    right = current_user.right
+    return render_template('change-info.html', form=form, id=id, right=right)
+
+
+@app.route('/search_book', methods=['GET', 'POST'])
+@login_required
+def search_book():  # 这个函数里不再处理提交按钮，使用Ajax局部刷新
     form = SearchBookForm()
+    # books = Book.query.filter(Book.book_name.like(form.content.data)).all()  # book_name.like(form.content.data)
+    content = request.form.get('content')
+    # books = Book.query.filter(Book.book_name.like(content)).all()
+    if content == '机器':
+        return jsonify({'result': 'ok'})
+    #else:
+        #return jsonify({'result': 'error'})
     return render_template('search-book.html', name=session.get('name'), form=form)
 
 

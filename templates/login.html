@@ -5,12 +5,19 @@
     <title>欢迎使用图书管理系统</title>
     <link rel="stylesheet" href="../static/layui/css/layui.css">
     <link rel="stylesheet" href="../static/login.css">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <style>
-        a:hover{text-decoration: none}
+          .alert{position:relative;padding:.75rem 1.25rem;margin-bottom:1rem;border:1px solid transparent;border-radius:.25rem}
+          .close{position:absolute;top:0;right:0;padding:.75rem 1.25rem;color:inherit}
+          .alert-warning{color:#856404;background-color:#fff3cd;border-color:#ffeeba}
+          .close{float:right;font-size:1.5rem;font-weight:700;line-height:1;color:#000;text-shadow:0 1px 0 #fff;opacity:.5}
+          .close:focus,.close:hover{color:#000;text-decoration:none;opacity:.75}
+          .close:not(:disabled):not(.disabled){cursor:pointer}
+          button.close{padding:0;background-color:transparent;border:0;-webkit-appearance:none}
+          .close{padding:1rem;margin:-1rem -1rem -1rem auto}
+          .alert-dismissible .close{position:absolute;top:0;right:0;padding:.75rem 1.25rem;color:inherit}
     </style>
 </head>
 <body>
@@ -46,7 +53,7 @@
             {{ form.submit(class="layui-btn") }}
         </div>
         <hr/>
-        <p><a href="javascript:;" class="fr" style="text-decoration: none;font-size: small;color: #A9A9A9;">忘记密码请与系统管理员联系</a></p>
+        <p><a href="javascript:;" class="fr">忘记密码请与系统管理员联系</a></p>
     </form>
 
 </div>

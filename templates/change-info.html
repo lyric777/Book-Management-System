@@ -1,29 +1,30 @@
 {% extends "base.html" %}
-{% block title %}修改密码{% endblock %}
+{% block title %}管理员信息设置{% endblock %}
 
 {% block body %}
 <fieldset class="layui-elem-field layui-field-title">
-  <legend>修改密码</legend>
+  <legend>修改个人信息</legend>
   <div class="layui-field-box" style="font-size: medium;line-height: 30px;">
       <br />
       <form class="layui-form" method="post">
         {{ form.csrf_token }}
         <div class="layui-form-item">
-            <label class="layui-form-label" style="width:150px">{{ form.old_password.label }}：</label>
+            <label class="layui-form-label" style="width:150px">账号：</label>
             <div class="layui-input-block">
-                {{ form.old_password(class="layui-input", style="width:40%", placeholder="请输入原密码") }}
+                <input type="text" value="{{ id }}" readonly="readonly" class="layui-input" style="width:40%">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label" style="width:150px">{{ form.password.label }}：</label>
+            <label class="layui-form-label" style="width:150px">{{ form.name.label }}：</label>
             <div class="layui-input-block">
-                {{ form.password(class="layui-input", style="width:40%", placeholder="请输入新密码") }}
+                {{ form.name(class="layui-input", style="width:40%") }}
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label" style="width:150px">{{ form.password2.label }}：</label>
+            <label class="layui-form-label" style="width:150px">权限：</label>
             <div class="layui-input-block">
-                {{ form.password2(class="layui-input", style="width:40%", placeholder="再次输入新密码") }}
+                <input type="text" value="{{ right }}" readonly="readonly" class="layui-input" style="width:40%">
+                <span style="font-size:16px;font-style: italic;color:#BFBFBF">账号、权限无法修改，若要修改请联系系统管理员</span>
             </div>
         </div>
         <div class="layui-form-item">
