@@ -2,7 +2,7 @@ from flask import Flask, render_template, session, redirect, url_for, flash, req
 import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager, Shell
-from forms import Login, SearchBookForm, ChangePasswordForm, EditInfoForm
+from forms import Login, SearchBookForm, ChangePasswordForm, EditInfoForm, SearchStudentForm
 from flask_login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -162,7 +162,7 @@ def user_info(id):
 def change_password():
     form = ChangePasswordForm()
     if form.password2.data != form.password.data:
-        flash('两次密码不一致！')
+        flash(u'两次密码不一致！')
     if form.validate_on_submit():
         if current_user.verify_password(form.old_password.data):
             current_user.password = form.password.data
@@ -194,14 +194,62 @@ def change_info():
 @login_required
 def search_book():  # 这个函数里不再处理提交按钮，使用Ajax局部刷新
     form = SearchBookForm()
-    # books = Book.query.filter(Book.book_name.like(form.content.data)).all()  # book_name.like(form.content.data)
-    content = request.form.get('content')
-    # books = Book.query.filter(Book.book_name.like(content)).all()
-    if content == '机器':
-        return jsonify({'result': 'ok'})
-    #else:
-        #return jsonify({'result': 'error'})
     return render_template('search-book.html', name=session.get('name'), form=form)
+
+
+@app.route('/books', methods=['POST'])
+def find_book():
+
+    def find_name():
+        return Book.query.filter(Book.book_name.like('%'+request.form.get('content')+'%')).all()
+
+    def find_author():
+        return Book.query.filter(Book.author.contains(request.form.get('content'))).all()
+
+    def find_class():
+        return Book.query.filter(Book.class_name.contains(request.form.get('content'))).all()
+
+    def find_isbn():
+        return Book.query.filter(Book.isbn.contains(request.form.get('content'))).all()
+
+    methods = {
+        'book_name': find_name,
+        'author': find_author,
+        'class_name': find_class,
+        'isbn': find_isbn
+    }
+    books = methods[request.form.get('method')]()
+    data = []
+    for book in books:
+        count = Inventory.query.filter_by(isbn=book.isbn).count()
+        available = Inventory.query.filter_by(isbn=book.isbn, status=True).count()
+        item = {'isbn': book.isbn, 'book_name': book.book_name, 'press': book.press, 'author': book.author,
+                'class_name': book.class_name, 'count': count, 'available': available}
+        data.append(item)
+    return jsonify(data)
+
+
+@app.route('/search_student', methods=['GET', 'POST'])
+@login_required
+def search_student():
+    form = SearchStudentForm()
+    return render_template('search-student.html', name=session.get('name'), form=form)
+
+
+@app.route('/student', methods=['POST'])
+def find_student():
+    stu = Student.query.filter_by(card_id=request.form.get('card')).first()
+    return {'name': stu.student_name, 'gender': stu.sex, 'valid_date': stu.valid_date, 'debt': stu.debt}
+
+
+@app.route('/record', methods=['POST'])
+def find_record():
+    records = ReadBook.query.filter_by(card_id=request.form.get('card')).all()
+    data = []
+    for record in records:
+        item = {'barcode': record.barcode, 'book_name': record.book_name, 'author': record.author,}
+        data.append(item)
+    return jsonify(data)
 
 
 if __name__ == '__main__':

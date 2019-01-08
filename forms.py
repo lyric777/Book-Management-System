@@ -9,12 +9,6 @@ class Login(FlaskForm):
     submit = SubmitField(u'登录')
 
 
-class SearchBookForm(FlaskForm):
-    methods = [('book_name', '书名'), ('author', '作者'), ('class_name', '类别'), ('isbn', 'ISBN')]
-    method = SelectField(choices=methods, validators=[DataRequired()])
-    content = StringField(validators=[DataRequired()])
-    submit = SubmitField('搜索')
-
 
 class ChangePasswordForm(FlaskForm):
     old_password = PasswordField(u'原密码', validators=[DataRequired()])
@@ -26,3 +20,15 @@ class ChangePasswordForm(FlaskForm):
 class EditInfoForm(FlaskForm):
     name = StringField(u'用户名', validators=[Length(1, 32)])
     submit = SubmitField(u'提交')
+
+
+class SearchBookForm(FlaskForm):
+    methods = [('book_name', '书名'), ('author', '作者'), ('class_name', '类别'), ('isbn', 'ISBN')]
+    method = SelectField(choices=methods, validators=[DataRequired()], coerce=str)
+    content = StringField(validators=[DataRequired()])
+    submit = SubmitField('搜索')
+
+
+class SearchStudentForm(FlaskForm):
+    card = StringField(validators=[DataRequired()])
+    submit = SubmitField('搜索')
