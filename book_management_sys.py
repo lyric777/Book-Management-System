@@ -2,8 +2,10 @@ from flask import Flask, render_template, session, redirect, url_for, flash, req
 import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager, Shell
-from forms import Login, SearchBookForm, ChangePasswordForm, EditInfoForm, SearchStudentForm
+from forms import Login, SearchBookForm, ChangePasswordForm, EditInfoForm, SearchStudentForm, NewStoreForm, StoreForm
 from flask_login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user
+import time
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -74,8 +76,8 @@ class Student(db.Model):
     student_name = db.Column(db.String(32))
     sex = db.Column(db.String(2))
     telephone = db.Column(db.String(11), nullable=True)
-    enroll_date = db.Column(db.Date)
-    valid_date = db.Column(db.Date)
+    enroll_date = db.Column(db.String(13))
+    valid_date = db.Column(db.String(13))
     loss = db.Column(db.Boolean, default=False)  # 是否挂失
     debt = db.Column(db.Boolean, default=False)  # 是否欠费
 
@@ -86,8 +88,8 @@ class Student(db.Model):
 class Inventory(db.Model):
     __tablename__ = 'inventory'
     barcode = db.Column(db.String(6), primary_key=True)
-    isbn = db.Column(db.String(13))
-    storage_date = db.Column(db.Date)
+    isbn = db.Column(db.ForeignKey('book.isbn'))
+    storage_date = db.Column(db.String(13))
     location = db.Column(db.String(32))
     withdraw = db.Column(db.Boolean, default=False)  # 是否注销
     status = db.Column(db.Boolean, default=True)  # 是否在馆
@@ -102,11 +104,11 @@ class ReadBook(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     barcode = db.Column(db.ForeignKey('inventory.barcode'), index=True)
     card_id = db.Column(db.ForeignKey('student.card_id'), index=True)
-    start_date = db.Column(db.Date)
+    start_date = db.Column(db.String(13))
     borrow_admin = db.Column(db.ForeignKey('admin.admin_id'))  # 借书操作员
-    end_date = db.Column(db.Date, nullable=True)
+    end_date = db.Column(db.String(13), nullable=True)
     return_admin = db.Column(db.ForeignKey('admin.admin_id'))  # 还书操作员
-    due_date = db.Column(db.Date)  # 应还日期
+    due_date = db.Column(db.String(13))  # 应还日期
 
     def __repr__(self):
         return '<ReadBook %r>' % self.id
@@ -236,20 +238,54 @@ def search_student():
     return render_template('search-student.html', name=session.get('name'), form=form)
 
 
+def timeStamp(timeNum):
+    if timeNum is None:
+        return timeNum
+    else:
+        timeStamp = float(float(timeNum)/1000)
+        timeArray = time.localtime(timeStamp)
+        print(time.strftime("%Y-%m-%d", timeArray))
+        return time.strftime("%Y-%m-%d", timeArray)
+
+
 @app.route('/student', methods=['POST'])
 def find_student():
     stu = Student.query.filter_by(card_id=request.form.get('card')).first()
-    return {'name': stu.student_name, 'gender': stu.sex, 'valid_date': stu.valid_date, 'debt': stu.debt}
+    if stu is None:
+        return jsonify([])
+    else:
+        valid_date = timeStamp(stu.valid_date)
+        return jsonify([{'name': stu.student_name, 'gender': stu.sex, 'valid_date': valid_date, 'debt': stu.debt}])
 
 
 @app.route('/record', methods=['POST'])
 def find_record():
-    records = ReadBook.query.filter_by(card_id=request.form.get('card')).all()
+    records = db.session.query(ReadBook).join(Inventory).join(Book).filter(ReadBook.card_id == request.form.get('card'))\
+        .with_entities(ReadBook.barcode, Inventory.isbn, Book.book_name, Book.author, ReadBook.start_date,
+                       ReadBook.end_date, ReadBook.due_date).all()  # with_entities啊啊啊啊卡了好久啊
     data = []
     for record in records:
-        item = {'barcode': record.barcode, 'book_name': record.book_name, 'author': record.author,}
+        start_date = timeStamp(record.start_date)
+        due_date = timeStamp(record.due_date)
+        end_date = timeStamp(record.end_date)
+        if end_date is None:
+            end_date = '未归还'
+        item = {'barcode': record.barcode, 'book_name': record.book_name, 'author': record.author,
+                'start_date': start_date, 'due_date': due_date, 'end_date': end_date}
         data.append(item)
     return jsonify(data)
+
+
+@app.route('/storage', methods=['GET', 'POST'])
+@login_required
+def storage():
+    form = StoreForm()
+    if form.validate_on_submit():
+        flash(u'入库成功！')
+        return redirect(url_for('storage', name=session.get('name'), form=form))
+    else:
+        flash(u'添加失败，请注意本书信息是否已录入，若为登记，请在‘新书入库’窗口录入信息。')
+    return render_template('storage.html', name=session.get('name'), form=form)
 
 
 if __name__ == '__main__':

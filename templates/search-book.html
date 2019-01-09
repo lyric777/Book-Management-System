@@ -1,11 +1,6 @@
 {% extends "base.html" %}
 {% block title %}查询图书信息{% endblock %}
 
-{% block style %}
-    .layui-unselect{width:240px;}
-    .layui-input{width:240px;}
-{% endblock %}
-
 {% block card %}<div class="layui-card-header"><h2>查询图书信息</h2></div>{% endblock %}
 {% block body %}
     <form class="layui-form" method="post" id="searchForm">
@@ -54,6 +49,7 @@
 {% endblock %}
 
 {% block script %}
+    <script>
     layui.use(['form','table','jquery'], function(){
         var form = layui.form;
         var table = layui.table;
@@ -120,9 +116,6 @@
                                     layer.msg('未找到任何结果',{time: 1000});
                                 });
                             }
-
-
-
                         }
                     });
                 }
@@ -131,6 +124,6 @@
         });
 
     });
-
+    </script>
 {% endblock %}
 

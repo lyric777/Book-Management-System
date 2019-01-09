@@ -48,7 +48,7 @@
         <li class="layui-nav-item">
           <a class="" href="javascript:;">图书管理</a>
           <dl class="layui-nav-child">
-             <dd><a href="javascript:;">入库管理</a></dd>
+             <dd><a href="{{ url_for('storage') }}">入库管理</a></dd>
              <dd><a href="javascript:;">学生借书</a></dd>
              <dd><a href="">学生还书</a></dd>
              <dd><a href="">图书注销</a></dd>
@@ -103,10 +103,10 @@ layui.use('element', function(){
 
 });
 </script>
-<script>
+
 {% block script %}
 
 {% endblock %}
-</script>
+
 </body>
 </html>

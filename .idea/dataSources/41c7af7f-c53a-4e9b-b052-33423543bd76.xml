@@ -88,7 +88,7 @@
     </column>
     <column id="27" parent="8" name="storage_date">
       <Position>3</Position>
-      <DataType>DATE|0</DataType>
+      <DataType>VARCHAR(13)|0</DataType>
     </column>
     <column id="28" parent="8" name="location">
       <Position>4</Position>
@@ -118,153 +118,158 @@
       <UnderlyingIndexName>sqlite_autoindex_inventory_1</UnderlyingIndexName>
     </key>
     <foreign-key id="34" parent="8">
+      <ColNames>isbn</ColNames>
+      <RefTableName>book</RefTableName>
+      <RefColNames>isbn</RefColNames>
+    </foreign-key>
+    <foreign-key id="35" parent="8">
       <ColNames>admin</ColNames>
       <RefTableName>admin</RefTableName>
       <RefColNames>admin_id</RefColNames>
     </foreign-key>
-    <check id="35" parent="8">
+    <check id="36" parent="8">
       <Predicate>status IN (0, 1)</Predicate>
     </check>
-    <check id="36" parent="8">
+    <check id="37" parent="8">
       <Predicate>withdraw IN (0, 1)</Predicate>
     </check>
-    <column id="37" parent="9" name="id">
+    <column id="38" parent="9" name="id">
       <Position>1</Position>
       <DataType>INTEGER|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="38" parent="9" name="barcode">
+    <column id="39" parent="9" name="barcode">
       <Position>2</Position>
       <DataType>VARCHAR(6)|0</DataType>
     </column>
-    <column id="39" parent="9" name="card_id">
+    <column id="40" parent="9" name="card_id">
       <Position>3</Position>
       <DataType>VARCHAR(8)|0</DataType>
     </column>
-    <column id="40" parent="9" name="start_date">
+    <column id="41" parent="9" name="start_date">
       <Position>4</Position>
-      <DataType>DATE|0</DataType>
+      <DataType>VARCHAR(13)|0</DataType>
     </column>
-    <column id="41" parent="9" name="borrow_admin">
+    <column id="42" parent="9" name="borrow_admin">
       <Position>5</Position>
       <DataType>VARCHAR(6)|0</DataType>
     </column>
-    <column id="42" parent="9" name="end_date">
+    <column id="43" parent="9" name="end_date">
       <Position>6</Position>
-      <DataType>DATE|0</DataType>
+      <DataType>VARCHAR(13)|0</DataType>
     </column>
-    <column id="43" parent="9" name="return_admin">
+    <column id="44" parent="9" name="return_admin">
       <Position>7</Position>
       <DataType>VARCHAR(6)|0</DataType>
     </column>
-    <column id="44" parent="9" name="due_date">
+    <column id="45" parent="9" name="due_date">
       <Position>8</Position>
-      <DataType>DATE|0</DataType>
+      <DataType>VARCHAR(13)|0</DataType>
     </column>
-    <index id="45" parent="9" name="ix_readbook_barcode">
+    <index id="46" parent="9" name="ix_readbook_barcode">
       <ColNames>barcode</ColNames>
       <ColumnCollations></ColumnCollations>
     </index>
-    <index id="46" parent="9" name="ix_readbook_card_id">
+    <index id="47" parent="9" name="ix_readbook_card_id">
       <ColNames>card_id</ColNames>
       <ColumnCollations></ColumnCollations>
     </index>
-    <key id="47" parent="9">
+    <key id="48" parent="9">
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="48" parent="9">
+    <foreign-key id="49" parent="9">
       <ColNames>barcode</ColNames>
       <RefTableName>inventory</RefTableName>
       <RefColNames>barcode</RefColNames>
     </foreign-key>
-    <foreign-key id="49" parent="9">
+    <foreign-key id="50" parent="9">
       <ColNames>card_id</ColNames>
       <RefTableName>student</RefTableName>
       <RefColNames>card_id</RefColNames>
     </foreign-key>
-    <foreign-key id="50" parent="9">
+    <foreign-key id="51" parent="9">
       <ColNames>borrow_admin</ColNames>
       <RefTableName>admin</RefTableName>
       <RefColNames>admin_id</RefColNames>
     </foreign-key>
-    <foreign-key id="51" parent="9">
+    <foreign-key id="52" parent="9">
       <ColNames>return_admin</ColNames>
       <RefTableName>admin</RefTableName>
       <RefColNames>admin_id</RefColNames>
     </foreign-key>
-    <column id="52" parent="10" name="type">
+    <column id="53" parent="10" name="type">
       <Position>1</Position>
       <DataType>text|0</DataType>
     </column>
-    <column id="53" parent="10" name="name">
+    <column id="54" parent="10" name="name">
       <Position>2</Position>
       <DataType>text|0</DataType>
     </column>
-    <column id="54" parent="10" name="tbl_name">
+    <column id="55" parent="10" name="tbl_name">
       <Position>3</Position>
       <DataType>text|0</DataType>
     </column>
-    <column id="55" parent="10" name="rootpage">
+    <column id="56" parent="10" name="rootpage">
       <Position>4</Position>
       <DataType>int|0</DataType>
     </column>
-    <column id="56" parent="10" name="sql">
+    <column id="57" parent="10" name="sql">
       <Position>5</Position>
       <DataType>text|0</DataType>
     </column>
-    <column id="57" parent="11" name="card_id">
+    <column id="58" parent="11" name="card_id">
       <Position>1</Position>
       <DataType>VARCHAR(8)|0</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="58" parent="11" name="student_id">
+    <column id="59" parent="11" name="student_id">
       <Position>2</Position>
       <DataType>VARCHAR(9)|0</DataType>
     </column>
-    <column id="59" parent="11" name="student_name">
+    <column id="60" parent="11" name="student_name">
       <Position>3</Position>
       <DataType>VARCHAR(32)|0</DataType>
     </column>
-    <column id="60" parent="11" name="sex">
+    <column id="61" parent="11" name="sex">
       <Position>4</Position>
       <DataType>VARCHAR(2)|0</DataType>
     </column>
-    <column id="61" parent="11" name="telephone">
+    <column id="62" parent="11" name="telephone">
       <Position>5</Position>
       <DataType>VARCHAR(11)|0</DataType>
     </column>
-    <column id="62" parent="11" name="enroll_date">
+    <column id="63" parent="11" name="enroll_date">
       <Position>6</Position>
-      <DataType>DATE|0</DataType>
+      <DataType>VARCHAR(13)|0</DataType>
     </column>
-    <column id="63" parent="11" name="valid_date">
+    <column id="64" parent="11" name="valid_date">
       <Position>7</Position>
-      <DataType>DATE|0</DataType>
+      <DataType>VARCHAR(13)|0</DataType>
     </column>
-    <column id="64" parent="11" name="loss">
+    <column id="65" parent="11" name="loss">
       <Position>8</Position>
       <DataType>BOOLEAN|0</DataType>
     </column>
-    <column id="65" parent="11" name="debt">
+    <column id="66" parent="11" name="debt">
       <Position>9</Position>
       <DataType>BOOLEAN|0</DataType>
     </column>
-    <index id="66" parent="11" name="sqlite_autoindex_student_1">
+    <index id="67" parent="11" name="sqlite_autoindex_student_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>card_id</ColNames>
       <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
-    <key id="67" parent="11">
+    <key id="68" parent="11">
       <ColNames>card_id</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>sqlite_autoindex_student_1</UnderlyingIndexName>
     </key>
-    <check id="68" parent="11">
+    <check id="69" parent="11">
       <Predicate>debt IN (0, 1)</Predicate>
     </check>
-    <check id="69" parent="11">
+    <check id="70" parent="11">
       <Predicate>loss IN (0, 1)</Predicate>
     </check>
   </database-model>

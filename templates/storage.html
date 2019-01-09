@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}库存管理{% endblock %}
+
+{% block body %}
+<fieldset class="layui-elem-field layui-field-title">
+  <legend>库存补充</legend>
+  <div class="layui-field-box" style="font-size: large;line-height: 40px;">
+      <div class="layui-row">
+          &nbsp;&nbsp;<i class="layui-icon">&#xe857;</i>&nbsp;&nbsp;&nbsp;账&nbsp;&nbsp;&nbsp;号：&nbsp;&nbsp;{{ form.barcode() }}
+      </div>
+      <div class="layui-row">
+          &nbsp;&nbsp;<i class="layui-icon">&#xe66f;</i>&nbsp;&nbsp;&nbsp;用户名：&nbsp;&nbsp;{{ form.location() }}
+      </div>
+      <div class="layui-row">
+          &nbsp;<i class="layui-icon">&#xe672;&nbsp;</i>拥有权限：&nbsp;{{ form.submit() }}
+      </div>
+  </div>
+</fieldset>
+{% endblock %}

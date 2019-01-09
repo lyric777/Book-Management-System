@@ -32,3 +32,19 @@ class SearchBookForm(FlaskForm):
 class SearchStudentForm(FlaskForm):
     card = StringField(validators=[DataRequired()])
     submit = SubmitField('搜索')
+
+
+class StoreForm(FlaskForm):
+    barcode = StringField(validators=[DataRequired(), Length(8)])
+    isbn = StringField(validators=[DataRequired(), Length(13)])
+    location = StringField(validators=[DataRequired(), Length(1, 32)])
+    submit = SubmitField(u'提交')
+
+
+class NewStoreForm(FlaskForm):
+    isbn = StringField(validators=[DataRequired(), Length(13)])
+    book_name = StringField(validators=[DataRequired(), Length(1, 64)])
+    press = StringField(validators=[DataRequired(), Length(1, 32)])
+    author = StringField(validators=[DataRequired(), Length(1, 64)])
+    class_name = StringField(validators=[DataRequired(), Length(1, 64)])
+    submit = SubmitField(u'提交')
