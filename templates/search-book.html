@@ -14,7 +14,7 @@
                     <div class="layui-col-md6">
                         <label class="layui-form-label">查询内容：</label>
                         <div class="layui-input-inline">
-                            {{ form.content(class="layui-input") }}
+                            {{ form.content(class="layui-input",style="width:250px") }}
                         </div>
                     </div>
                     <div class="layui-col-md2">
@@ -53,7 +53,7 @@
     layui.use(['form','table','jquery'], function(){
         var form = layui.form;
         var table = layui.table;
-        var $ = layui.$
+        var $ = layui.$;
 
         table.init('re', {
               height: 390

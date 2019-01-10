@@ -281,11 +281,57 @@ def find_record():
 def storage():
     form = StoreForm()
     if form.validate_on_submit():
-        flash(u'入库成功！')
-        return redirect(url_for('storage', name=session.get('name'), form=form))
-    else:
-        flash(u'添加失败，请注意本书信息是否已录入，若为登记，请在‘新书入库’窗口录入信息。')
+        book = Book.query.filter_by(isbn=request.form.get('isbn')).first()
+        exist = Inventory.query.filter_by(barcode=request.form.get('barcode')).first()
+        print(book)
+        if book is None:
+            flash(u'添加失败，请注意本书信息是否已录入，若未登记，请在‘新书入库’窗口录入信息。')
+        else:
+            if len(request.form.get('barcode')) != 6:
+                flash(u'图书编码长度错误')
+            else:
+                if exist is not None:
+                    flash(u'该编号已经存在！')
+                else:
+                    item = Inventory()
+                    item.barcode = request.form.get('barcode')
+                    print(1111111111)
+                    item.isbn = request.form.get('isbn')
+                    item.admin = current_user.admin_id
+                    item.location = request.form.get('location')
+                    item.status = True
+                    item.withdraw = False
+                    item.storage_date = int(time.time())*1000
+                    db.session.add(item)
+                    db.session.commit()
+                    flash(u'入库成功！')
+        return redirect(url_for('storage'))
     return render_template('storage.html', name=session.get('name'), form=form)
+
+
+@app.route('/new_store', methods=['GET', 'POST'])
+@login_required
+def new_store():
+    form = NewStoreForm()
+    if form.validate_on_submit():
+        if len(request.form.get('isbn')) != 13:
+            flash(u'ISBN长度错误')
+        else:
+            exist = Book.query.filter_by(isbn=request.form.get('isbn')).first()
+            if exist is not None:
+                flash(u'该图书信息已经存在，请核对后再录入；或者填写入库表。')
+            else:
+                book = Book()
+                book.isbn = request.form.get('isbn')
+                book.book_name = request.form.get('book_name')
+                book.press = request.form.get('press')
+                book.author = request.form.get('author')
+                book.class_name = request.form.get('class_name')
+                db.session.add(book)
+                db.session.commit()
+                flash(u'图书信息添加成功！')
+        return redirect(url_for('new_store'))
+    return render_template('new-store.html', name=session.get('name'), form=form)
 
 
 if __name__ == '__main__':

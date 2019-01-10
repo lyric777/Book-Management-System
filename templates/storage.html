@@ -1,19 +1,54 @@
 {% extends 'base.html' %}
 {% block title %}库存管理{% endblock %}
 
+{% block card %}
+    <div class="layui-card-header">
+        <h2>库存补充</h2>
+        <button class="layui-btn layui-btn-lg" style="float:right;margin-top:-50px;margin-right:40px;" id="newbook">
+            <i class="layui-icon">&#xe608;</i>新书登记
+        </button>
+    </div>
+{% endblock %}
 {% block body %}
-<fieldset class="layui-elem-field layui-field-title">
-  <legend>库存补充</legend>
-  <div class="layui-field-box" style="font-size: large;line-height: 40px;">
-      <div class="layui-row">
-          &nbsp;&nbsp;<i class="layui-icon">&#xe857;</i>&nbsp;&nbsp;&nbsp;账&nbsp;&nbsp;&nbsp;号：&nbsp;&nbsp;{{ form.barcode() }}
-      </div>
-      <div class="layui-row">
-          &nbsp;&nbsp;<i class="layui-icon">&#xe66f;</i>&nbsp;&nbsp;&nbsp;用户名：&nbsp;&nbsp;{{ form.location() }}
-      </div>
-      <div class="layui-row">
-          &nbsp;<i class="layui-icon">&#xe672;&nbsp;</i>拥有权限：&nbsp;{{ form.submit() }}
-      </div>
-  </div>
-</fieldset>
+    <form class="layui-form" method="post">
+        {{ form.csrf_token }}
+        <div class="layui-form-item" style="height: 50px;margin-top: 30px;">
+            <label class="layui-form-label" style="font-size: medium">图书编号：</label>
+            <div class="layui-input-block">
+                {{ form.barcode(class="layui-input", style="width:40%") }}
+            </div>
+        </div>
+        <div class="layui-form-item" style="height: 50px;">
+            <label class="layui-form-label" style="font-size: medium">ISBN：</label>
+            <div class="layui-input-block">
+                {{ form.isbn(class="layui-input", style="width:40%") }}
+            </div>
+        </div>
+        <div class="layui-form-item" style="height: 50px;">
+            <label class="layui-form-label" style="font-size: medium">位置：</label>
+            <div class="layui-input-block">
+                {{ form.location(class="layui-input", style="width:40%") }}
+            </div>
+        </div>
+        <div class="layui-form-item" style="height: 50px;">
+            <div class="layui-input-block">
+                {{ form.submit(class="layui-btn", style="width:100px;font-size:medium") }}
+            </div>
+        </div>
+    </form>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+    layui.use(['form','jquery'], function () {
+        var form = layui.form;
+        var $ = layui.$;
+
+    });
+    $(document).ready(function(){
+        $("#newbook").on('click',function () {
+            window.location.href="{{ url_for('new_store') }}";
+        })
+    });
+    
+</script>
 {% endblock %}

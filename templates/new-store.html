@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}库存管理{% endblock %}
+
+{% block card %}
+    <div class="layui-card-header">
+        <h2>新书登记</h2>
+        <button class="layui-btn layui-btn-lg" style="float:right;margin-top:-50px;margin-right:40px;" id="storage">
+            <i class="layui-icon">&#xe608;</i>新书入库
+        </button>
+    </div>
+{% endblock %}
+{% block body %}
+    <br />
+    <form class="layui-form" method="post">
+        {{ form.csrf_token }}
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size: medium">ISBN：</label>
+            <div class="layui-input-block">
+                {{ form.isbn(class="layui-input", style="width:40%") }}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size: medium">书名：</label>
+            <div class="layui-input-block">
+                {{ form.book_name(class="layui-input", style="width:40%") }}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size: medium">出版社：</label>
+            <div class="layui-input-block">
+                {{ form.press(class="layui-input", style="width:40%") }}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size: medium">作者：</label>
+            <div class="layui-input-block">
+                {{ form.author(class="layui-input", style="width:40%") }}
+            </div>
+        </div>
+         <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size: medium">类别：</label>
+            <div class="layui-input-block">
+                {{ form.class_name(class="layui-input", style="width:40%") }}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                {{ form.submit(class="layui-btn", style="width:100px;font-size:medium") }}
+            </div>
+        </div>
+    </form>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+    layui.use(['form','jquery'], function () {
+        var form = layui.form;
+        var $ = layui.$;
+
+    });
+    $(document).ready(function(){
+        $("#storage").on('click',function () {
+            window.location.href="{{ url_for('storage') }}";
+        })
+    });
+
+</script>
+{% endblock %}

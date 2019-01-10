@@ -26,8 +26,11 @@
         </div>
     </form>
     <div id="info">
-    <p><span id="name">姓名：</span><span id="gender" style="margin-left: 140px;">性别：</span>
-        <span id="valid_date" style="margin-left: 120px;">有效期至：</span><span id="debt" style="margin-left: 140px;">是否欠费：</span>
+    <p>
+        <span>姓名：<span id="name"></span></span>
+        <span style="margin-left: 140px;">性别：<span id="gender"></span></span>
+        <span style="margin-left: 120px;">有效期至：<span id="valid_date"></span></span>
+        <span style="margin-left: 140px;">是否欠费：<span id="debt"></span></span>
     </p>
     </div>
     <div id="remove">
@@ -82,6 +85,10 @@
                         processData:false,
                         contentType:false,
                         success:function(data){
+                            $("#name").empty();
+                            $("#gender").empty();
+                            $("#valid_date").empty();
+                            $("#debt").empty();
                             if(data.length !== 0){
                                 $("#name").append(data[0].name);
                                 $("#gender").append(data[0].gender);
