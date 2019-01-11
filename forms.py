@@ -48,3 +48,9 @@ class NewStoreForm(FlaskForm):
     author = StringField(validators=[DataRequired(), Length(1, 64)])
     class_name = StringField(validators=[DataRequired(), Length(1, 64)])
     submit = SubmitField(u'提交')
+
+
+class BorrowForm(FlaskForm):
+    card = StringField(validators=[DataRequired()])
+    book_name = StringField(validators=[DataRequired()])
+    submit = SubmitField(u'搜索')

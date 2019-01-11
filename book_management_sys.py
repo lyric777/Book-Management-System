@@ -2,7 +2,7 @@ from flask import Flask, render_template, session, redirect, url_for, flash, req
 import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager, Shell
-from forms import Login, SearchBookForm, ChangePasswordForm, EditInfoForm, SearchStudentForm, NewStoreForm, StoreForm
+from forms import Login, SearchBookForm, ChangePasswordForm, EditInfoForm, SearchStudentForm, NewStoreForm, StoreForm, BorrowForm
 from flask_login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user
 import time
 
@@ -332,6 +332,38 @@ def new_store():
                 flash(u'图书信息添加成功！')
         return redirect(url_for('new_store'))
     return render_template('new-store.html', name=session.get('name'), form=form)
+
+
+@app.route('/borrow', methods=['GET', 'POST'])
+@login_required
+def borrow():
+    form = BorrowForm()
+    return render_template('borrow.html', name=session.get('name'), form=form)
+
+
+@app.route('/find_stu_book', methods=['GET', 'POST'])
+def find_stu_book():
+    stu = Student.query.filter_by(card_id=request.form.get('card')).first()
+    if stu is None:
+        return jsonify([{'stu': 0}])  # 没找到
+    if stu.debt is True:
+        return jsonify([{'stu': 1}])  # 欠费
+    if int(stu.valid_date) < int(time.time())*1000:
+        return jsonify([{'stu': 2}])  # 到期
+    if stu.loss is True:
+        return jsonify([{'stu': 3}])  # 已经挂失
+    books = db.session.query(Book).join(Inventory).filter(Book.book_name.contains(request.form.get('book_name')),
+        Inventory.status == 1).with_entities(Inventory.barcode, Book.isbn, Book.book_name, Book.author, Book.press).\
+        all()
+    data = []
+    print(request.form.get('book_name'))
+    print(11111)
+    for book in books:
+        print(book)
+        item = {'barcode': book.barcode, 'isbn': book.isbn, 'book_name': book.book_name,
+                'author': book.author, 'press': book.press}
+        data.append(item)
+    return jsonify(data)
 
 
 if __name__ == '__main__':

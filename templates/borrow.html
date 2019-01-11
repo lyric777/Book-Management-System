@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}学生借书{% endblock %}
+
+{% block card %}<div class="layui-card-header"><h2>学生借书</h2></div>{% endblock %}
+{% block body %}
+    <form class="layui-form" method="post" id="searchForm">
+    <!--{{ form.csrf_token }}-->
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label style="font-size: medium;width: 150px;" class="layui-form-label">学生借阅卡号码：</label>
+                <div class="layui-input-inline">
+                    {{ form.card(class="layui-input", id="card") }}
+                </div>
+                <label style="font-size: medium;width: 80px;" class="layui-form-label">书名：</label>
+                <div class="layui-input-inline">
+                    {{ form.book_name(class="layui-input", id="book_name") }}
+                </div>
+                <div class="layui-input-inline">{{ form.submit(class="layui-btn", id="search") }}</div>
+            </div>
+        </div>
+    </form>
+    <div id="remove">
+    <table lay-even id="result" lay-filter="re">
+      <thead>
+        <tr>
+          <th lay-data="{field:'barcode', width:160}">图书编号</th>
+          <th lay-data="{field:'isbn', width:180}">ISBN</th>
+          <th lay-data="{field:'book_name', width:240}">书名</th>
+          <th lay-data="{field:'author', width:160}">作者</th>
+          <th lay-data="{field:'start_date', width:200}">出版社</th>
+          <th lay-data="{field:'end_date'}">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+    </div>
+    <table id="test" lay-filter="test"></table>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+    layui.use(['form','table','jquery'], function(){
+        var form = layui.form;
+        var table = layui.table;
+        var $ = layui.$;
+
+        table.init('re', {
+              height: 390
+              ,limit: 7
+              ,page: true
+        });
+        table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+          var data = obj.data; //获得当前行数据
+          var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+          var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+          if(layEvent === 'borr'){
+            layer.confirm('真的删除行么', function(index){
+              obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+              layer.close(index);
+              //向服务端发送删除指令
+            });
+          }
+        });
+
+        $(document).ready(function(){
+            $('#search').on('click',function () {
+                var form = new FormData(document.getElementById("searchForm"));
+                if($('#card').val() === "" || $('#book_name').val() === ""){
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+
+                        layer.msg('请填写查询内容',{time: 800});
+                    });
+                }
+                else{
+                    $.ajax({
+                        url:"{{ url_for('find_stu_book') }}",
+                        type:"post",
+                        data:form,
+                        processData:false,
+                        contentType:false,
+                        success:function(data){
+                            if(data.length !== 0){
+                                $('#remove').remove();
+                                table.render({
+                                    elem: '#test'
+                                    ,data:data
+                                    ,cols: [[
+                                        {field:'barcode', title:'图书编号', width:160}
+                                        ,{field:'isbn', title:'ISBN', width:180}
+                                        ,{field:'book_name', title:'书名', width:240}
+                                        ,{field:'author', title:'作者', width:140}
+                                        ,{field:'press', title:'出版社', width:200}
+                                        ,{title:'操作', fixed: 'right', align:'center', toolbar: '#barDemo'}
+                                    ]]
+                                    ,page: true
+                                    ,height: 380
+                                    ,limit: 7
+                                    ,response: {
+                                        statusCode: 200
+                                    }
+                                    ,parseData: function(data){
+                                        return {
+                                            "code": data.status,
+                                            "msg": data.message,
+                                            "count": data.total,
+                                            "data": data.rows.item
+                                        };
+                                    }
+
+
+                                });
+
+                            }
+                            else {
+                                layui.use('layer', function(){
+                                var layer = layui.layer;
+
+                                layer.msg('找不到该图书！',{time: 1000});
+                                });
+                            }
+                        }
+                    });
+
+                }
+                return false;
+            });
+        });
+    });
+    </script>
+    <script type="text/html" id="barDemo">
+      <a class="layui-btn layui-btn-sm" lay-event="borr">借出</a>
+    </script>
+{% endblock %}
+

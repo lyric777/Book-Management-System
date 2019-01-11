@@ -49,7 +49,7 @@
           <a class="" href="javascript:;">图书管理</a>
           <dl class="layui-nav-child">
              <dd><a href="{{ url_for('storage') }}">入库管理</a></dd>
-             <dd><a href="javascript:;">学生借书</a></dd>
+             <dd><a href="{{ url_for('borrow') }}">学生借书</a></dd>
              <dd><a href="">学生还书</a></dd>
              <dd><a href="">图书注销</a></dd>
            </dl>
@@ -58,8 +58,8 @@
           <a href="javascript:;">信息设置</a>
           <dl class="layui-nav-child">
              <dd><a href="{{ url_for('change_info') }}">管理员信息设置</a></dd>
-             <dd><a href="">图书馆信息设置</a></dd>
-             <dd><a href="">图书词库设置</a></dd>
+             <dd><a href="javascript:;">图书馆信息设置</a></dd>
+             <dd><a href="javascript:;">图书词库设置</a></dd>
           </dl>
         </li>
         <li class="layui-nav-item">
