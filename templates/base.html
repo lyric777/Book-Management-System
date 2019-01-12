@@ -19,6 +19,7 @@
       .close{padding:1rem;margin:-1rem -1rem -1rem auto}
       .alert-dismissible .close{position:absolute;top:0;right:0;padding:.75rem 1.25rem;color:inherit}
   </style>
+  {% block head %}{% endblock %}
   <style>{% block style %}{% endblock %}</style>
 </head>
 <body class="layui-layout-body">
@@ -50,8 +51,8 @@
           <dl class="layui-nav-child">
              <dd><a href="{{ url_for('storage') }}">入库管理</a></dd>
              <dd><a href="{{ url_for('borrow') }}">学生借书</a></dd>
-             <dd><a href="">学生还书</a></dd>
-             <dd><a href="">图书注销</a></dd>
+             <dd><a href="{{ url_for('return_book') }}">学生还书</a></dd>
+             <dd><a href="javascript:;">图书注销</a></dd>
            </dl>
         </li>
         <li class="layui-nav-item">

@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager, Shell
 from forms import Login, SearchBookForm, ChangePasswordForm, EditInfoForm, SearchStudentForm, NewStoreForm, StoreForm, BorrowForm
 from flask_login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user
-import time
+import time, datetime
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -141,15 +141,33 @@ def logout():
     logout_user()
     flash('您已经登出！')
     return redirect(url_for('login'))
-'''
-flash消息在第四章最后一节，在管理员权限那里用
-'''
 
 
 @app.route('/index')
 @login_required
 def index():
     return render_template('index.html', name=session.get('name'))
+
+
+@app.route('/echarts')
+@login_required
+def echarts():
+    days = []
+    num = []
+    today_date = datetime.date.today()
+    today_str = today_date.strftime("%Y-%m-%d")
+    today_stamp = time.mktime(time.strptime(today_str + ' 00:00:00', '%Y-%m-%d %H:%M:%S'))
+    ten_ago = int(today_stamp) - 9 * 86400
+    for i in range(0, 10):
+        borr = ReadBook.query.filter_by(start_date=str((ten_ago+i*86400)*1000)).count()
+        retu = ReadBook.query.filter_by(end_date=str((ten_ago+i*86400)*1000)).count()
+        num.append(borr + retu)
+        days.append(timeStamp((ten_ago+i*86400)*1000))
+    data = []
+    for i in range(0, 10):
+        item = {'name': days[i], 'num': num[i]}
+        data.append(item)
+    return jsonify(data)
 
 
 @app.route('/user/<id>')
@@ -231,6 +249,12 @@ def find_book():
     return jsonify(data)
 
 
+@app.route('/user/book', methods=['GET', 'POST'])
+def user_book():
+    form = SearchBookForm()
+    return render_template('user-book.html', form=form)
+
+
 @app.route('/search_student', methods=['GET', 'POST'])
 @login_required
 def search_student():
@@ -276,6 +300,12 @@ def find_record():
     return jsonify(data)
 
 
+@app.route('/user/student', methods=['GET', 'POST'])
+def user_student():
+    form = SearchStudentForm()
+    return render_template('user-student.html', form=form)
+
+
 @app.route('/storage', methods=['GET', 'POST'])
 @login_required
 def storage():
@@ -283,7 +313,6 @@ def storage():
     if form.validate_on_submit():
         book = Book.query.filter_by(isbn=request.form.get('isbn')).first()
         exist = Inventory.query.filter_by(barcode=request.form.get('barcode')).first()
-        print(book)
         if book is None:
             flash(u'添加失败，请注意本书信息是否已录入，若未登记，请在‘新书入库’窗口录入信息。')
         else:
@@ -295,13 +324,15 @@ def storage():
                 else:
                     item = Inventory()
                     item.barcode = request.form.get('barcode')
-                    print(1111111111)
                     item.isbn = request.form.get('isbn')
                     item.admin = current_user.admin_id
                     item.location = request.form.get('location')
                     item.status = True
                     item.withdraw = False
-                    item.storage_date = int(time.time())*1000
+                    today_date = datetime.date.today()
+                    today_str = today_date.strftime("%Y-%m-%d")
+                    today_stamp = time.mktime(time.strptime(today_str + ' 00:00:00', '%Y-%m-%d %H:%M:%S'))
+                    item.storage_date = int(today_stamp)*1000
                     db.session.add(item)
                     db.session.commit()
                     flash(u'入库成功！')
@@ -344,11 +375,14 @@ def borrow():
 @app.route('/find_stu_book', methods=['GET', 'POST'])
 def find_stu_book():
     stu = Student.query.filter_by(card_id=request.form.get('card')).first()
+    today_date = datetime.date.today()
+    today_str = today_date.strftime("%Y-%m-%d")
+    today_stamp = time.mktime(time.strptime(today_str + ' 00:00:00', '%Y-%m-%d %H:%M:%S'))
     if stu is None:
         return jsonify([{'stu': 0}])  # 没找到
     if stu.debt is True:
         return jsonify([{'stu': 1}])  # 欠费
-    if int(stu.valid_date) < int(time.time())*1000:
+    if int(stu.valid_date) < int(today_stamp)*1000:
         return jsonify([{'stu': 2}])  # 到期
     if stu.loss is True:
         return jsonify([{'stu': 3}])  # 已经挂失
@@ -356,12 +390,105 @@ def find_stu_book():
         Inventory.status == 1).with_entities(Inventory.barcode, Book.isbn, Book.book_name, Book.author, Book.press).\
         all()
     data = []
-    print(request.form.get('book_name'))
-    print(11111)
     for book in books:
-        print(book)
         item = {'barcode': book.barcode, 'isbn': book.isbn, 'book_name': book.book_name,
                 'author': book.author, 'press': book.press}
+        data.append(item)
+    return jsonify(data)
+
+
+@app.route('/out', methods=['GET', 'POST'])
+@login_required
+def out():
+    today_date = datetime.date.today()
+    today_str = today_date.strftime("%Y-%m-%d")
+    today_stamp = time.mktime(time.strptime(today_str + ' 00:00:00', '%Y-%m-%d %H:%M:%S'))
+    barcode = request.args.get('barcode')
+    card = request.args.get('card')
+    book_name = request.args.get('book_name')
+    readbook = ReadBook()
+    readbook.barcode = barcode
+    readbook.card_id = card
+    readbook.start_date = int(today_stamp)*1000
+    readbook.due_date = (int(today_stamp)+40*86400)*1000
+    readbook.borrow_admin = current_user.admin_id
+    db.session.add(readbook)
+    db.session.commit()
+    book = Inventory.query.filter_by(barcode=barcode).first()
+    book.status = False
+    db.session.add(book)
+    db.session.commit()
+    bks = db.session.query(Book).join(Inventory).filter(Book.book_name.contains(book_name), Inventory.status == 1).\
+        with_entities(Inventory.barcode, Book.isbn, Book.book_name, Book.author, Book.press).all()
+    data = []
+    for bk in bks:
+        item = {'barcode': bk.barcode, 'isbn': bk.isbn, 'book_name': bk.book_name,
+                'author': bk.author, 'press': bk.press}
+        data.append(item)
+    return jsonify(data)
+
+
+@app.route('/return', methods=['GET', 'POST'])
+@login_required
+def return_book():
+    form = SearchStudentForm()
+    return render_template('return.html', name=session.get('name'), form=form)
+
+
+@app.route('/find_not_return_book', methods=['GET', 'POST'])
+def find_not_return_book():
+    stu = Student.query.filter_by(card_id=request.form.get('card')).first()
+    today_date = datetime.date.today()
+    today_str = today_date.strftime("%Y-%m-%d")
+    today_stamp = time.mktime(time.strptime(today_str + ' 00:00:00', '%Y-%m-%d %H:%M:%S'))
+    if stu is None:
+        return jsonify([{'stu': 0}])  # 没找到
+    if stu.debt is True:
+        return jsonify([{'stu': 1}])  # 欠费
+    if int(stu.valid_date) < int(today_stamp)*1000:
+        return jsonify([{'stu': 2}])  # 到期
+    if stu.loss is True:
+        return jsonify([{'stu': 3}])  # 已经挂失
+    books = db.session.query(ReadBook).join(Inventory).join(Book).filter(ReadBook.card_id == request.form.get('card'),
+        ReadBook.end_date.is_(None)).with_entities(ReadBook.barcode, Book.isbn, Book.book_name, ReadBook.start_date,
+                                                 ReadBook.due_date).all()
+    data = []
+    for book in books:
+        start_date = timeStamp(book.start_date)
+        due_date = timeStamp(book.due_date)
+        item = {'barcode': book.barcode, 'isbn': book.isbn, 'book_name': book.book_name,
+                'start_date': start_date, 'due_date': due_date}
+        data.append(item)
+    return jsonify(data)
+
+
+@app.route('/in', methods=['GET', 'POST'])
+@login_required
+def bookin():
+    barcode = request.args.get('barcode')
+    card = request.args.get('card')
+    record = ReadBook.query.filter(ReadBook.barcode == barcode, ReadBook.card_id == card, ReadBook.end_date.is_(None)).\
+        first()
+    today_date = datetime.date.today()
+    today_str = today_date.strftime("%Y-%m-%d")
+    today_stamp = time.mktime(time.strptime(today_str + ' 00:00:00', '%Y-%m-%d %H:%M:%S'))
+    record.end_date = int(today_stamp)*1000
+    record.return_admin = current_user.admin_id
+    db.session.add(record)
+    db.session.commit()
+    book = Inventory.query.filter_by(barcode=barcode).first()
+    book.status = True
+    db.session.add(book)
+    db.session.commit()
+    bks = db.session.query(ReadBook).join(Inventory).join(Book).filter(ReadBook.card_id == card,
+        ReadBook.end_date.is_(None)).with_entities(ReadBook.barcode, Book.isbn, Book.book_name, ReadBook.start_date,
+                                                 ReadBook.due_date).all()
+    data = []
+    for bk in bks:
+        start_date = timeStamp(bk.start_date)
+        due_date = timeStamp(bk.due_date)
+        item = {'barcode': bk.barcode, 'isbn': bk.isbn, 'book_name': bk.book_name,
+                'start_date': start_date, 'due_date': due_date}
         data.append(item)
     return jsonify(data)
 

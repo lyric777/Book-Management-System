@@ -1,0 +1,168 @@
+{% extends "base-user.html" %}
+{% block title %}查询学生信息{% endblock %}
+
+{% block body %}
+<div style="width: 1200px;margin: auto">
+    <br />
+    <form class="layui-form" method="post" id="searchForm">
+    <!--{{ form.csrf_token }}-->
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <div class="layui-row layui-col-space10">
+                    <div class="layui-col-md4">
+                        <label style="font-size: medium;width: 180px;" class="layui-form-label">请输入学生借阅卡号码：</label>
+                    </div>
+                    <div class="layui-col-md5">
+                        <div class="layui-input-inline">
+                            {{ form.card(class="layui-input", id="card") }}
+                        </div>
+                    </div>
+                    <div class="layui-col-md2">
+                        <div class="layui-input-inline">{{ form.submit(class="layui-btn", id="search") }}</div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+    <div id="info">
+    <p>
+        <span>姓名：<span id="name"></span></span>
+        <span style="margin-left: 140px;">性别：<span id="gender"></span></span>
+        <span style="margin-left: 120px;">有效期至：<span id="valid_date"></span></span>
+        <span style="margin-left: 140px;">是否欠费：<span id="debt"></span></span>
+    </p>
+    </div>
+    <div id="remove">
+    <table lay-even id="result" lay-filter="re">
+      <thead>
+        <tr>
+          <th lay-data="{field:'barcode', width:160}">图书编号</th>
+          <th lay-data="{field:'book_name', width:200}">书名</th>
+          <th lay-data="{field:'author', width:140}">作者</th>
+          <th lay-data="{field:'start_date', width:200}">起始日期</th>
+          <th lay-data="{field:'due_date', width:200}">应还日期</th>
+          <th lay-data="{field:'end_date'}">还书日期</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+    </div>
+    <table id="test" lay-filter="test"></table>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script>
+    layui.use(['form','table','jquery'], function(){
+        var form = layui.form;
+        var table = layui.table;
+        var $ = layui.$;
+
+        table.init('re', {
+              height: 390
+              ,limit: 7
+              ,page: true
+        });
+
+        $(document).ready(function(){
+            $('#search').on('click',function () {
+                var form = new FormData(document.getElementById("searchForm"));
+                if($('#card').val() === ""){
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+
+                        layer.msg('请填写查询内容',{time: 800});
+                    });
+                }
+                else{
+                    $.ajax({
+                        url:"{{ url_for('find_student') }}",
+                        type:"post",
+                        data:form,
+                        processData:false,
+                        contentType:false,
+                        success:function(data){
+                            $("#name").empty();
+                            $("#gender").empty();
+                            $("#valid_date").empty();
+                            $("#debt").empty();
+                            if(data.length !== 0){
+                                $("#name").append(data[0].name);
+                                $("#gender").append(data[0].gender);
+                                $("#valid_date").append(data[0].valid_date);
+                                if(data[0].debt === false){
+                                    $("#debt").append('否');
+                                }
+                                else{
+                                    $("#debt").append('是');
+                                }
+
+                                $.ajax({
+                                    url:"{{ url_for('find_record') }}",
+                                    type:"post",
+                                    data:form,
+                                    processData:false,
+                                    contentType:false,
+                                    success:function(data){
+                                        if (data.length !== 0){
+                                            $('#remove').remove();
+                                            table.render({
+                                                elem: '#test'
+                                                ,data:data
+                                                ,cols: [[
+                                                    {field:'barcode', title:'图书编号', width:160}
+                                                    ,{field:'book_name', title:'书名', width:200}
+                                                    ,{field:'author', title:'作者', width:140}
+                                                    ,{field:'start_date', title:'起始日期', width:200}
+                                                    ,{field:'due_date', title:'应还日期', width:200}
+                                                    ,{field:'end_date', title:'还书日期'}
+                                                ]]
+                                                ,page: true
+                                                ,height: 390
+                                                ,limit: 7
+                                                ,response: {
+                                                    statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+                                                }
+                                                ,parseData: function(data){ //将原始数据解析成 table 组件所规定的数据
+                                                    return {
+                                                        "code": data.status, //解析接口状态
+                                                        "msg": data.message, //解析提示文本
+                                                        "count": data.total, //解析数据长度
+                                                        "data": data.rows.item //解析数据列表
+                                                    };
+                                                }
+                                            });
+                                        }
+                                        else{
+                                            layui.use('layer', function(){
+                                            var layer = layui.layer;
+
+                                            layer.msg('没有任何借阅记录',{time: 1000});
+                                            });
+                                        }
+                                    }
+                                });
+
+                            }
+                            else {
+                                layui.use('layer', function(){
+                                var layer = layui.layer;
+
+                                layer.msg('找不到该学生！',{time: 1000});
+                                });
+                            }
+                        }
+                    });
+
+                }
+                return false;
+            });
+        });
+    });
+    </script>
+{% endblock %}
+
