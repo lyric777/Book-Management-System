@@ -1,7 +1,9 @@
 # Book-Management-System
 Flask + LayUI + SQLite
 
+
 19.4.27：过段时间有空改成用蓝图写，堆一起写太乱了，顺便也重新理解一下蓝图
+
 
 使用说明+功能演示：
 
