@@ -6,6 +6,7 @@ Flask + LayUI + SQLite
 
 ## 2019.8.6：2.0版本：https://github.com/lyric777/Book-Management-System-V2 ，使用蓝本，对项目文档结构进行了重组，没有任何功能或页面上的修改
 
+## 2020.8.6：请淘店家不要再盗用我的源码去卖钱了！
 
 使用说明+功能演示：
 
